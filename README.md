@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Safe Voices Club
 
-## Getting Started
+Aplikasi keselamatan personal (PWA) untuk pengguna Indonesia — **Lindungi Dirimu, Jaga Sesama**.
 
-First, run the development server:
+## Fitur
+
+- **Zona Panik** — Ketuk 3x cepat atau goyangkan HP untuk mengaktifkan mode darurat
+- **Panggilan Darurat** — Countdown otomatis ke 112/110
+- **WhatsApp Alert** — Kirim pesan darurat ke kontak terpercaya
+- **Rekaman Audio** — Bukti audio tersimpan lokal di perangkat
+- **Peta Komunitas** — Lihat laporan darurat dan kejadian pelecehan anonim
+- **Quick Exit** — Sembunyikan aplikasi dengan tampilan cuaca palsu
+- **Pusat Bantuan** — Hotline SAPA 129, Komnas Perempuan, LBH APIK, dan lainnya
+
+## Tech Stack
+
+- Next.js 14 (App Router) + TypeScript
+- Tailwind CSS + shadcn/ui
+- Framer Motion
+- Supabase (peta komunitas real-time)
+- Leaflet.js + OpenStreetMap
+- next-pwa
+
+## Setup Lokal
+
+### 1. Clone & Install
+
+```bash
+npm install
+```
+
+### 2. Konfigurasi Supabase
+
+1. Buat proyek gratis di [supabase.com](https://supabase.com)
+2. Jalankan migrasi SQL dari `supabase/migrations/001_init.sql` di SQL Editor
+3. Salin URL dan anon key dari Settings → API
+
+### 3. Environment Variables
+
+```bash
+cp .env.example .env.local
+```
+
+Isi `.env.local`:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...
+```
+
+### 4. Jalankan
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy ke Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/safe-voices-club)
 
-## Learn More
+1. Push ke GitHub
+2. Import proyek di Vercel
+3. Tambahkan environment variables `NEXT_PUBLIC_SUPABASE_URL` dan `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Deploy
 
-To learn more about Next.js, take a look at the following resources:
+## Privasi
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Tidak ada autentikasi pengguna — penggunaan sepenuhnya anonim
+- Kontak darurat dan rekaman audio **hanya** tersimpan di perangkat (localStorage)
+- Supabase hanya menyimpan koordinat anonim dan jenis kejadian
+- Tidak ada analytics atau tracking pihak ketiga
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Lisensi
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
