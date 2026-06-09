@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { isOnboardingComplete } from "@/lib/storage";
 
-const EXEMPT_PATHS = ["/onboarding", "/cuaca", "/kalkulator"];
+const EXEMPT_PATHS = ["/onboarding", "/cuaca"];
 
 export function OnboardingGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();

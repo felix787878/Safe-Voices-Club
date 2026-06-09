@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { X, Phone, MapPin, MessageCircle, Mic, Copy, Check } from "lucide-react";
+import { Phone, MapPin, MessageCircle, Mic, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   getEmergencyContacts,
@@ -12,7 +12,6 @@ import {
 import { getWhatsAppLink } from "@/lib/phone";
 import { insertPanicEvent, resolvePanicEvent } from "@/lib/supabase";
 import { formatRecordingCountdown } from "@/lib/format";
-import { useRouter } from "next/navigation";
 
 type ActionStatus = "pending" | "success" | "error" | "loading";
 
@@ -21,7 +20,6 @@ interface PanicOverlayProps {
 }
 
 export function PanicOverlay({ onDismiss }: PanicOverlayProps) {
-  const router = useRouter();
   const [countdown, setCountdown] = useState(3);
   const [callStatus, setCallStatus] = useState<ActionStatus>("pending");
   const [locationStatus, setLocationStatus] = useState<ActionStatus>("loading");
@@ -202,14 +200,6 @@ export function PanicOverlay({ onDismiss }: PanicOverlayProps) {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] bg-gradient-to-b from-danger to-red-900 text-white overflow-y-auto"
     >
-      <button
-        onClick={() => router.push("/cuaca")}
-        className="absolute top-4 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/20 hover:bg-white/30"
-        aria-label="Keluar cepat"
-      >
-        <X className="h-6 w-6" />
-      </button>
-
       <div className="flex flex-col items-center px-4 py-8 min-h-screen">
         <div className="text-center mb-6">
           <p className="text-lg opacity-90">Menghubungi 112 (Darurat Nasional)...</p>

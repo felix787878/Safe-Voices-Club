@@ -100,7 +100,7 @@ export function EmergencyContacts() {
 
       {contacts.length === 0 && (
         <div className="mb-3 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 dark:bg-red-900/20 dark:border-red-800 dark:text-red-300">
-          ⚠️ Tambahkan kontak darurat agar fitur panik berfungsi penuh
+          ⚠️ Tambahkan kontak terlebih dahulu, agar fitur panik bisa berfungsi
         </div>
       )}
 

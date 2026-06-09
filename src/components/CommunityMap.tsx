@@ -22,6 +22,11 @@ import {
 
 const JAKARTA_CENTER: [number, number] = [-6.2088, 106.8456];
 
+function toDatetimeLocal(date: Date): string {
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 const INCIDENT_TYPES = [
   "Catcalling",
   "Penguntitan",
@@ -51,23 +56,24 @@ function createPulseIcon(color: string): L.DivIcon {
 export function CommunityMap() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
-  const heatLayerRef = useRef<L.Layer | null>(null);
   const markersRef = useRef<L.LayerGroup | null>(null);
+  const pinHandlerRef = useRef<((e: L.LeafletMouseEvent) => void) | null>(null);
 
-  const [showHeatmap, setShowHeatmap] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [toast, setToast] = useState("");
   const [incidentType, setIncidentType] = useState(INCIDENT_TYPES[0]);
   const [description, setDescription] = useState("");
-  const [incidentTime, setIncidentTime] = useState(
-    new Date().toISOString().slice(0, 16)
-  );
+  const [incidentTime, setIncidentTime] = useState("");
+  const [maxIncidentTime, setMaxIncidentTime] = useState("");
+  const [timeError, setTimeError] = useState("");
   const [reportLocation, setReportLocation] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
   const [placingPin, setPlacingPin] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const showMapControls = !dialogOpen && !placingPin;
 
   useEffect(() => {
     const container = mapRef.current;
@@ -135,38 +141,28 @@ export function CommunityMap() {
 
     return () => {
       cancelled = true;
-      heatLayerRef.current = null;
       markersRef.current = null;
       map.remove();
       mapInstance.current = null;
     };
   }, []);
 
-  const toggleHeatmap = async () => {
-    const map = mapInstance.current;
-    if (!map) return;
+  const openReportDialog = () => {
+    const now = new Date();
+    setIncidentTime(toDatetimeLocal(now));
+    setMaxIncidentTime(toDatetimeLocal(now));
+    setTimeError("");
+    setDialogOpen(true);
+  };
 
-    if (showHeatmap && heatLayerRef.current) {
-      map.removeLayer(heatLayerRef.current);
-      heatLayerRef.current = null;
-      setShowHeatmap(false);
-    } else {
-      const incidents = await fetchIncidentReports(30);
-      if (incidents.length > 0) {
-        const { loadHeatPlugin, createHeatLayer } = await import("@/lib/leaflet-heat");
-        await loadHeatPlugin();
-        const heatData = incidents.map((i: IncidentReport) => [
-          i.latitude,
-          i.longitude,
-          0.5,
-        ] as [number, number, number]);
-        heatLayerRef.current = createHeatLayer(heatData, {
-          radius: 25,
-          blur: 15,
-        }).addTo(map);
-      }
-      setShowHeatmap(true);
+  const cancelPinPlacement = () => {
+    const map = mapInstance.current;
+    if (map && pinHandlerRef.current) {
+      map.off("click", pinHandlerRef.current);
+      pinHandlerRef.current = null;
     }
+    setPlacingPin(false);
+    setDialogOpen(true);
   };
 
   const detectLocation = () => {
@@ -182,21 +178,48 @@ export function CommunityMap() {
   };
 
   const enablePinPlacement = () => {
-    setPlacingPin(true);
     const map = mapInstance.current;
     if (!map) return;
+
+    setDialogOpen(false);
+    setPlacingPin(true);
 
     const handler = (e: L.LeafletMouseEvent) => {
       setReportLocation({ lat: e.latlng.lat, lng: e.latlng.lng });
       setPlacingPin(false);
       map.off("click", handler);
+      pinHandlerRef.current = null;
+      const now = new Date();
+      setIncidentTime(toDatetimeLocal(now));
+      setMaxIncidentTime(toDatetimeLocal(now));
+      setDialogOpen(true);
     };
+
+    pinHandlerRef.current = handler;
     map.on("click", handler);
+  };
+
+  const handleIncidentTimeChange = (value: string) => {
+    setIncidentTime(value);
+    const selected = new Date(value);
+    const now = new Date();
+    if (selected > now) {
+      setTimeError("Waktu kejadian tidak boleh melebihi waktu sekarang.");
+    } else {
+      setTimeError("");
+    }
   };
 
   const handleSubmit = async () => {
     if (!reportLocation) {
       alert("Pilih lokasi kejadian terlebih dahulu.");
+      return;
+    }
+
+    const selectedTime = new Date(incidentTime);
+    const now = new Date();
+    if (selectedTime > now) {
+      setTimeError("Waktu kejadian tidak boleh melebihi waktu sekarang.");
       return;
     }
 
@@ -245,25 +268,25 @@ export function CommunityMap() {
 
       <div ref={mapRef} className="h-full w-full z-0" />
 
-      <button
-        onClick={toggleHeatmap}
-        className="absolute top-3 right-3 z-[1000] rounded-lg bg-white px-3 py-2 text-xs font-medium shadow-md dark:bg-gray-900 min-h-[44px]"
-      >
-        {showHeatmap ? "Sembunyikan Heatmap" : "Tampilkan Zona Rawan"}
-      </button>
+      {showMapControls && (
+        <button
+          onClick={openReportDialog}
+          className="absolute bottom-20 left-1/2 -translate-x-1/2 z-[1000] rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg min-h-[44px]"
+        >
+          + Laporkan Kejadian
+        </button>
+      )}
 
-      <div className="absolute bottom-20 right-3 z-[1000] rounded-lg bg-white/95 p-3 text-xs shadow-md dark:bg-gray-900/95 max-w-[200px]">
-        <p>🔴 Kejadian darurat (24 jam)</p>
-        <p>🟠 Laporan pelecehan</p>
-        <p>🟡 Zona rawan (heatmap)</p>
-      </div>
-
-      <button
-        onClick={() => setDialogOpen(true)}
-        className="absolute bottom-20 left-1/2 -translate-x-1/2 z-[1000] rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg min-h-[44px]"
-      >
-        + Laporkan Kejadian
-      </button>
+      {placingPin && (
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-[1000] flex flex-col items-center gap-2 w-[90%] max-w-sm">
+          <div className="rounded-xl bg-primary text-white px-4 py-3 text-sm text-center shadow-lg w-full">
+            Ketuk peta untuk memilih lokasi kejadian
+          </div>
+          <Button variant="secondary" size="sm" onClick={cancelPinPlacement}>
+            Batal
+          </Button>
+        </div>
+      )}
 
       {toast && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1001] rounded-lg bg-safe text-white px-4 py-2 text-sm shadow-lg">
@@ -271,7 +294,13 @@ export function CommunityMap() {
         </div>
       )}
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) setTimeError("");
+        }}
+      >
         <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Laporkan Kejadian</DialogTitle>
@@ -316,8 +345,12 @@ export function CommunityMap() {
               <Input
                 type="datetime-local"
                 value={incidentTime}
-                onChange={(e) => setIncidentTime(e.target.value)}
+                max={maxIncidentTime}
+                onChange={(e) => handleIncidentTimeChange(e.target.value)}
               />
+              {timeError && (
+                <p className="text-xs text-danger mt-1">{timeError}</p>
+              )}
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Lokasi</label>
@@ -325,13 +358,8 @@ export function CommunityMap() {
                 <Button variant="outline" size="sm" onClick={detectLocation}>
                   Deteksi Otomatis
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={enablePinPlacement}
-                  className={placingPin ? "ring-2 ring-primary" : ""}
-                >
-                  {placingPin ? "Ketuk peta..." : "Pilih di Peta"}
+                <Button variant="outline" size="sm" onClick={enablePinPlacement}>
+                  Pilih di Peta
                 </Button>
               </div>
               {reportLocation && (
@@ -343,7 +371,7 @@ export function CommunityMap() {
             <Button
               className="w-full"
               onClick={handleSubmit}
-              disabled={submitting}
+              disabled={submitting || !!timeError}
             >
               {submitting ? "Mengirim..." : "Kirim Laporan"}
             </Button>

@@ -29,11 +29,6 @@ export default function RekamanPage() {
 
   return (
     <div className="px-4 py-4">
-      <div className="sticky top-0 z-10 mb-4 rounded-lg bg-orange-50 border border-orange-200 px-4 py-3 text-sm text-orange-700 dark:bg-orange-900/20 dark:border-orange-800 dark:text-orange-300">
-        ⚠️ Rekaman tersimpan di perangkat ini saja. Segera kirim ke polisi atau
-        simpan ke cloud sebagai bukti.
-      </div>
-
       {storageWarning && (
         <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 dark:bg-red-900/20 dark:border-red-800 dark:text-red-300">
           Penyimpanan hampir penuh — hapus rekaman lama
