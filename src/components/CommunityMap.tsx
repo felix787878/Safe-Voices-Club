@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
@@ -69,26 +69,16 @@ export function CommunityMap() {
   const [placingPin, setPlacingPin] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const initMap = useCallback(async () => {
-    if (!mapRef.current || mapInstance.current) return;
+  useEffect(() => {
+    const container = mapRef.current;
+    if (!container || mapInstance.current) return;
 
-    let center: [number, number] = JAKARTA_CENTER;
-
-    if (navigator.geolocation) {
-      try {
-        const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-          });
-        });
-        center = [pos.coords.latitude, pos.coords.longitude];
-      } catch {
-        // default to Jakarta
-      }
+    // Hindari double-init jika container sudah dipakai Leaflet
+    if ((container as HTMLDivElement & { _leaflet_id?: number })._leaflet_id) {
+      return;
     }
 
-    const map = L.map(mapRef.current, { center, zoom: 13 });
+    const map = L.map(container, { center: JAKARTA_CENTER, zoom: 13 });
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>',
     }).addTo(map);
@@ -96,38 +86,61 @@ export function CommunityMap() {
     markersRef.current = L.layerGroup().addTo(map);
     mapInstance.current = map;
 
-    const [panicEvents, incidents] = await Promise.all([
-      fetchActivePanicEvents(),
-      fetchIncidentReports(30),
-    ]);
+    let cancelled = false;
 
-    panicEvents.forEach((event: PanicEvent) => {
-      L.marker([event.latitude, event.longitude], {
-        icon: createPulseIcon("#E74C3C"),
-      })
-        .bindPopup(
-          `🚨 Laporan Darurat — ${formatRelativeTime(event.created_at)}`
-        )
-        .addTo(markersRef.current!);
-    });
+    const loadMapData = async () => {
+      if (navigator.geolocation) {
+        try {
+          const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 5000,
+            });
+          });
+          if (!cancelled) {
+            map.setView([pos.coords.latitude, pos.coords.longitude], 13);
+          }
+        } catch {
+          // tetap gunakan Jakarta sebagai default
+        }
+      }
 
-    incidents.forEach((incident: IncidentReport) => {
-      L.marker([incident.latitude, incident.longitude], {
-        icon: createPulseIcon("#E67E22"),
-      })
-        .bindPopup(`${incident.incident_type}`)
-        .addTo(markersRef.current!);
-    });
+      const [panicEvents, incidents] = await Promise.all([
+        fetchActivePanicEvents(),
+        fetchIncidentReports(30),
+      ]);
 
-  }, []);
+      if (cancelled || !markersRef.current) return;
 
-  useEffect(() => {
-    initMap();
+      panicEvents.forEach((event: PanicEvent) => {
+        L.marker([event.latitude, event.longitude], {
+          icon: createPulseIcon("#E74C3C"),
+        })
+          .bindPopup(
+            `🚨 Laporan Darurat — ${formatRelativeTime(event.created_at)}`
+          )
+          .addTo(markersRef.current!);
+      });
+
+      incidents.forEach((incident: IncidentReport) => {
+        L.marker([incident.latitude, incident.longitude], {
+          icon: createPulseIcon("#E67E22"),
+        })
+          .bindPopup(`${incident.incident_type}`)
+          .addTo(markersRef.current!);
+      });
+    };
+
+    loadMapData();
+
     return () => {
-      mapInstance.current?.remove();
+      cancelled = true;
+      heatLayerRef.current = null;
+      markersRef.current = null;
+      map.remove();
       mapInstance.current = null;
     };
-  }, [initMap]);
+  }, []);
 
   const toggleHeatmap = async () => {
     const map = mapInstance.current;
