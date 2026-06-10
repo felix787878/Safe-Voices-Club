@@ -222,11 +222,19 @@
 
 .guide-p-wrap {
   position: relative;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  max-width: 436px;
+  width: min(436px, calc(100vw - 32px));
+  height: calc(min(436px, calc(100vw - 32px)) * 406 / 436);
   margin: 0 auto;
+}
+
+.guide-p-inner {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 436px;
+  height: 406px;
+  transform: translateX(-50%) scale(calc(min(436px, calc(100vw - 32px)) / 436));
+  transform-origin: top center;
 }
 
 .guide-phone {
@@ -242,6 +250,7 @@
     0 14px 36px rgba(0, 0, 0, 0.5),
     inset 0 0 0 1px #3a3a3a;
   flex-shrink: 0;
+  margin: 0 auto;
 }
 
 .guide-phone::before {
@@ -376,25 +385,6 @@
 
 .guide-co-txt.r {
   text-align: right;
-}
-
-/* Mobile: skala proporsional agar callout + garis tetap terlihat (bukan disembunyikan) */
-@media (max-width: 519px) {
-  .guide-m-item {
-    overflow-x: auto;
-    overflow-y: visible;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 4px;
-  }
-
-  .guide-p-wrap {
-    width: 436px;
-    max-width: none;
-    flex-shrink: 0;
-    transform: scale(calc((100vw - 32px) / 436));
-    transform-origin: top center;
-    margin-bottom: calc(406px * (((100vw - 32px) / 436) - 1));
-  }
 }
 
 .guide-legend {

@@ -144,6 +144,7 @@ export function UserGuidePoster() {
           <div className="guide-m-item">
             <div className="guide-m-label">① Halaman Utama</div>
             <div className="guide-p-wrap">
+              <div className="guide-p-inner">
               <div className="guide-phone">
                 <div className="guide-screen">
                   <div className="guide-sbar">
@@ -190,6 +191,7 @@ export function UserGuidePoster() {
               <Callout side="left" top={100} letter="A" label="Kartu kontak darurat + tombol WA hijau" />
               <Callout side="left" top={156} letter="B" label="Tambah kontak baru (maks 3)" />
               <Callout side="right" top={210} letter="C" label="Zona PANIK, ketuk 3× cepat" />
+              </div>
             </div>
             <div className="guide-legend">
               <LegendItem letter="A">
@@ -208,6 +210,7 @@ export function UserGuidePoster() {
           <div className="guide-m-item">
             <div className="guide-m-label">② Layar Darurat</div>
             <div className="guide-p-wrap">
+              <div className="guide-p-inner">
               <div className="guide-phone">
                 <div className="guide-screen">
                   <div className="guide-ps-bg">
@@ -252,6 +255,7 @@ export function UserGuidePoster() {
               <Callout side="right" top={136} letter="B" label="Butuh 1 ketukan konfirmasi di dialer HP" />
               <Callout side="right" top={175} letter="C" label="Backup: polisi langsung (110)" />
               <Callout side="right" top={340} letter="D" label="Ketuk saat situasi sudah aman" />
+              </div>
             </div>
             <div className="guide-legend">
               <LegendItem letter="A"><strong>Countdown 112:</strong> 3 detik hitung mundur, lalu dialer terbuka dengan 112 sudah terisi otomatis.</LegendItem>
@@ -265,6 +269,7 @@ export function UserGuidePoster() {
           <div className="guide-m-item">
             <div className="guide-m-label">③ Peta Komunitas</div>
             <div className="guide-p-wrap">
+              <div className="guide-p-inner">
               <div className="guide-phone">
                 <div className="guide-screen">
                   <div className="guide-sbar-pur">
@@ -298,7 +303,8 @@ export function UserGuidePoster() {
               </div>
               <Callout side="left" top={56} letter="A" label="Laporan darurat aktif (24 jam)" />
               <Callout side="right" top={160} letter="B" label="Laporan manual dari pengguna (oranye)" />
-              <Callout side="right" top={288} letter="C" label="Tandai lokasi kejadian lampau" />
+              <Callout side="right" top={330} letter="C" label="Tandai lokasi kejadian lampau" />
+              </div>
             </div>
             <div className="guide-legend">
               <LegendItem letter="A"><strong>Marker Merah:</strong> Laporan panik aktif dari pengguna lain. Muncul selama 24 jam, lalu otomatis hilang.</LegendItem>
@@ -311,6 +317,7 @@ export function UserGuidePoster() {
           <div className="guide-m-item">
             <div className="guide-m-label">④ Rekaman Bukti</div>
             <div className="guide-p-wrap">
+              <div className="guide-p-inner">
               <div className="guide-phone">
                 <div className="guide-screen">
                   <div className="guide-sbar">
@@ -352,6 +359,7 @@ export function UserGuidePoster() {
               <Callout side="left" top={120} letter="B" label="Waveform gelombang suara rekaman" />
               <Callout side="left" top={230} letter="D" label="Rekaman kedua dari sesi lain" />
               <Callout side="right" top={155} letter="C" label="Unduh sebagai file bukti (.webm)" />
+              </div>
             </div>
             <div className="guide-legend">
               <LegendItem letter="A"><strong>Rekaman Otomatis:</strong> Merekam 2 menit audio saat tombol panik aktif.</LegendItem>
