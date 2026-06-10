@@ -120,7 +120,7 @@ const SLIDES = [
     eyebrow: "Tentang Safe Voices Club",
     title: "Kamu Tidak Sendirian",
     description:
-      "Platform keselamatan personal untuk perempuan Indonesia. Laporkan, lindungi, dan dukung satu sama lain.",
+      ""Bersama kita lebih aman. Platform pelaporan dan keselamatan untuk semua pengguna Indonesia."",
     Illustration: HeartRibbonIllustration,
   },
   {
@@ -129,7 +129,7 @@ const SLIDES = [
     eyebrow: "Fitur Zona Panik",
     title: "Panik? 3 Ketukan Saja",
     description:
-      "Ketuk layar 3 kali atau goyangkan HP — langsung menghubungi 112 dan mengirim lokasimu ke kontak darurat.",
+      "Ketuk layar 3 kali atau goyangkan HP untuk langsung menghubungi 112 dan mengirim lokasimu ke kontak darurat.",
     Illustration: PanicIllustration,
   },
   {
@@ -138,7 +138,7 @@ const SLIDES = [
     eyebrow: "Peta Komunitas",
     title: "Jaga Sesama, Bersama",
     description:
-      "Pantau laporan kejadian di sekitarmu secara real-time dan bantu lindungi orang lain di komunitasmu.",
+      "Pantau laporan kejadian di sekitarmu secara real-time dan bantu lindungi orang lain.",
     Illustration: MapIllustration,
   },
 ] as const;
