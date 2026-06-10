@@ -120,7 +120,7 @@ const SLIDES = [
     eyebrow: "Tentang Safe Voices Club",
     title: "Kamu Tidak Sendirian",
     description:
-      ""Bersama kita lebih aman. Platform pelaporan dan keselamatan untuk semua pengguna Indonesia."",
+      "Bersama kita lebih aman. Platform pelaporan dan keselamatan untuk semua pengguna Indonesia.",
     Illustration: HeartRibbonIllustration,
   },
   {
