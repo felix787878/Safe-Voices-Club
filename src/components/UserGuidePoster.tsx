@@ -309,7 +309,7 @@ export function UserGuidePoster() {
 
           {/* Screen 4 */}
           <div className="guide-m-item">
-            <div className="guide-m-label">④ Rekaman Bukti — /rekaman</div>
+            <div className="guide-m-label">④ Rekaman Bukti</div>
             <div className="guide-p-wrap">
               <div className="guide-phone">
                 <div className="guide-screen">
@@ -364,7 +364,7 @@ export function UserGuidePoster() {
       </div>
 
       <div className="guide-emg">
-        <h2>Nomor Darurat — Hubungi Langsung</h2>
+        <h2>Nomor Darurat</h2>
         <div className="guide-ng">
           <div className="guide-nc">
             <div className="n">112</div>
